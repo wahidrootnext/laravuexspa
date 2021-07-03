@@ -10,7 +10,7 @@
 
     </head>
     <body class="antialiased">
-        <div id="app" class="text-2xl text-green-900">Hello World</div>
+        <div id="app"></div>
 
         <script src="{{ asset('js/app.js') }}"></script>
     </body>
