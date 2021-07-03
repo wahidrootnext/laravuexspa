@@ -6,8 +6,9 @@
 
         <title>Laravel</title>
 
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="{{ asset('favicon.ico') }}" rel="icon">
 
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body class="antialiased">
         <div id="app"></div>
