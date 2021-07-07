@@ -1,37 +1,79 @@
 <template>
-    <div class="flex h-screen">
-        <div class="w-8/12 p-4 bg-gray-100">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <div class="w-full md:w-6/12 lg:w-7/12 xl:w-8/12 px-4 py-8 md:px-8 bg-indigo-50">
             <div class="flex h-full justify-center items-center">
-                <lottie :anim="require('../../svg/blogging/blogging.json')"/>
+                <router-link :to="{ name: 'home' }"><svg width="100" viewBox="0 -.11377 49.742 51.317" xmlns="http://www.w3.org/2000/svg"><path d="m49.626 11.564a.809.809 0 0 1 .028.209v10.972a.8.8 0 0 1 -.402.694l-9.209 5.302v10.509c0 .286-.152.55-.4.694l-19.223 11.066c-.044.025-.092.041-.14.058-.018.006-.035.017-.054.022a.805.805 0 0 1 -.41 0c-.022-.006-.042-.018-.063-.026-.044-.016-.09-.03-.132-.054l-19.219-11.066a.801.801 0 0 1 -.402-.694v-32.916c0-.072.01-.142.028-.21.006-.023.02-.044.028-.067.015-.042.029-.085.051-.124.015-.026.037-.047.055-.071.023-.032.044-.065.071-.093.023-.023.053-.04.079-.06.029-.024.055-.05.088-.069h.001l9.61-5.533a.802.802 0 0 1 .8 0l9.61 5.533h.002c.032.02.059.045.088.068.026.02.055.038.078.06.028.029.048.062.072.094.017.024.04.045.054.071.023.04.036.082.052.124.008.023.022.044.028.068a.809.809 0 0 1 .028.209v20.559l8.008-4.611v-10.51c0-.07.01-.141.028-.208.007-.024.02-.045.028-.068.016-.042.03-.085.052-.124.015-.026.037-.047.054-.071.024-.032.044-.065.072-.093.023-.023.052-.04.078-.06.03-.024.056-.05.088-.069h.001l9.611-5.533a.801.801 0 0 1 .8 0l9.61 5.533c.034.02.06.045.09.068.025.02.054.038.077.06.028.029.048.062.072.094.018.024.04.045.054.071.023.039.036.082.052.124.009.023.022.044.028.068zm-1.574 10.718v-9.124l-3.363 1.936-4.646 2.675v9.124l8.01-4.611zm-9.61 16.505v-9.13l-4.57 2.61-13.05 7.448v9.216zm-36.84-31.068v31.068l17.618 10.143v-9.214l-9.204-5.209-.003-.002-.004-.002c-.031-.018-.057-.044-.086-.066-.025-.02-.054-.036-.076-.058l-.002-.003c-.026-.025-.044-.056-.066-.084-.02-.027-.044-.05-.06-.078l-.001-.003c-.018-.03-.029-.066-.042-.1-.013-.03-.03-.058-.038-.09v-.001c-.01-.038-.012-.078-.016-.117-.004-.03-.012-.06-.012-.09v-21.483l-4.645-2.676-3.363-1.934zm8.81-5.994-8.007 4.609 8.005 4.609 8.006-4.61-8.006-4.608zm4.164 28.764 4.645-2.674v-20.096l-3.363 1.936-4.646 2.675v20.096zm24.667-23.325-8.006 4.609 8.006 4.609 8.005-4.61zm-.801 10.605-4.646-2.675-3.363-1.936v9.124l4.645 2.674 3.364 1.937zm-18.422 20.561 11.743-6.704 5.87-3.35-8-4.606-9.211 5.303-8.395 4.833z" fill="#ff2d20"/></svg></router-link>
             </div>
         </div>
-        <div class="w-4/12 p-8 self-center">
-            <form class="grid grid-cols-1 gap-3">
+        <div class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12 px-4 py-8 md:px-8 self-center">
+            <form class="grid grid-cols-1 gap-3" @submit.prevent="registration" novalidate>
                 <div class="block text-2xl font-bold text-indigo-700 pb-2">Create an account</div>
                 <label class="block">
-                    <span class="text-gray-700 font-medium">Email address</span>
-                    <input type="email" class="mt-1 block w-full rounded-0 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <span class="text-gray-700 font-medium inline-block mb-1">First name</span>
+                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z]+" required v-model="form.first_name">
+                    <span class="text-red-500 text-sm hidden">Please provide a valid first name</span>
                 </label>
                 <label class="block">
-                    <span class="text-gray-700 font-medium">Password</span>
-                    <input type="password" class="mt-1 block w-full rounded-0 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <span class="text-gray-700 font-medium inline-block mb-1">Last name</span>
+                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z]+" required v-model="form.last_name">
+                    <span class="text-red-500 text-sm hidden">Please provide a valid last name</span>
                 </label>
-                <label class="block pt-2">
-                    <button type="button" class="bg-indigo-500 text-white px-6 py-3 w-full rounded font-bold hover:bg-indigo-600 transition duration-200 each-in-out">Submit</button>
+                <label class="block">
+                    <span class="text-gray-700 font-medium inline-block mb-1">Email address</span>
+                    <input type="email" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required v-model="form.email">
+                    <span class="text-red-500 text-sm hidden">Please provide a valid email address</span>
                 </label>
-                <label class="block text-center">
-                    Already have an account? <router-link :to="{ name: 'login' }" class="text-indigo-500">Log in</router-link>
+                <label class="block">
+                    <span class="text-gray-700 font-medium inline-block mb-1">Password</span>
+                    <input type="password" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" minlength="6" required v-model="form.password">
+                    <span class="text-red-500 text-sm hidden">Please provide a valid password</span>
                 </label>
+                <label class="block">
+                    <span class="text-gray-700 font-medium inline-block mb-1">Confirm Password</span>
+                    <input type="password" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" minlength="6" required v-model="form.password_confirmation">
+                    <span class="text-red-500 text-sm hidden">Passwords must be matched</span>
+                </label>
+                <label class="block">
+                    <span class="text-gray-700 font-medium inline-block mb-1">Mobile</span>
+                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[0-9]{9,}" required v-model="form.mobile">
+                    <span class="text-red-500 text-sm hidden">Please provide a valid mobile number</span>
+                </label>
+                <div class="block pt-2">
+                    <button v-if="loading" type="button" class="bg-indigo-400 px-6 py-3 w-full rounded cursor-default"><svg class="animate-spin h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></button>
+                    <button v-else type="submit" class="bg-indigo-500 text-white px-6 py-3 w-full rounded font-bold hover:bg-indigo-600 transition duration-200 each-in-out">Submit</button>
+                </div>
+                <div class="block text-center">
+                    Already have an account? <router-link :to="{ name: 'login' }" class="text-indigo-500">Login</router-link>
+                </div>
             </form>
         </div>
     </div>
 </template>
 
 <script>
-    import Lottie from '../components/Lottie.vue';
     export default {
-        components: {
-            Lottie
+        data() {
+            return {
+                loading: false,
+                form: {
+                    first_name: null,
+                    last_name: null,
+                    email: null,
+                    password: null,
+                    password_confirmation: null,
+                    mobile: null
+                }
+            }
+        },
+        methods: {
+            registration(event) {
+                let form = event.target;
+                form.classList.add('was-validated');
+                if (form.checkValidity()) {
+                    this.loading = true;
+                    console.log(this.form);
+                }
+            }
         }
     }
 </script>
