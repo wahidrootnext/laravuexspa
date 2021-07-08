@@ -1,5 +1,5 @@
 <template>
-    Dashboard
+    
 </template>
 
 <script>

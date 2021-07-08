@@ -9,14 +9,9 @@
             <form class="grid grid-cols-1 gap-3" @submit.prevent="registration" novalidate>
                 <div class="block text-2xl font-bold text-indigo-700 pb-2">Create an account</div>
                 <label class="block">
-                    <span class="text-gray-700 font-medium inline-block mb-1">First name</span>
-                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z]+" required v-model="form.first_name">
-                    <span class="text-red-500 text-sm hidden">Please provide a valid first name</span>
-                </label>
-                <label class="block">
-                    <span class="text-gray-700 font-medium inline-block mb-1">Last name</span>
-                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z]+" required v-model="form.last_name">
-                    <span class="text-red-500 text-sm hidden">Please provide a valid last name</span>
+                    <span class="text-gray-700 font-medium inline-block mb-1">Name</span>
+                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z]+" required v-model="form.name">
+                    <span class="text-red-500 text-sm hidden">Please provide a valid name</span>
                 </label>
                 <label class="block">
                     <span class="text-gray-700 font-medium inline-block mb-1">Email address</span>
@@ -32,11 +27,6 @@
                     <span class="text-gray-700 font-medium inline-block mb-1">Confirm Password</span>
                     <input type="password" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" minlength="6" required v-model="form.password_confirmation">
                     <span class="text-red-500 text-sm hidden">Passwords must be matched</span>
-                </label>
-                <label class="block">
-                    <span class="text-gray-700 font-medium inline-block mb-1">Mobile</span>
-                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[0-9]{9,}" required v-model="form.mobile">
-                    <span class="text-red-500 text-sm hidden">Please provide a valid mobile number</span>
                 </label>
                 <div class="block pt-2">
                     <button v-if="loading" type="button" class="bg-indigo-400 px-6 py-3 w-full rounded cursor-default"><svg class="animate-spin h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></button>
@@ -56,12 +46,10 @@
             return {
                 loading: false,
                 form: {
-                    first_name: null,
-                    last_name: null,
+                    name: null,
                     email: null,
                     password: null,
-                    password_confirmation: null,
-                    mobile: null
+                    password_confirmation: null
                 }
             }
         },
