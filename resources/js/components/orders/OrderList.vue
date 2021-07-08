@@ -1,5 +1,5 @@
 <template>
-    I am dashboard
+    Order List
 </template>
 
 <script>

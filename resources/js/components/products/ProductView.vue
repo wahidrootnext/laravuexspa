@@ -1,5 +1,5 @@
 <template>
-    I am dashboard
+    Product View
 </template>
 
 <script>
