@@ -11,6 +11,7 @@ import Orders from '../components/orders/OrderList.vue';
 
 const router = createRouter({
     history: createWebHistory(),
+    linkExactActiveClass: "bg-gray-800",
     routes: [
         { path: '/', name: 'home', component: Home, meta: { auth: undefined } },
         { path: '/login', name: 'login', component: Login, meta: { auth: false } },
