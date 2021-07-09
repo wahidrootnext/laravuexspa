@@ -4,10 +4,6 @@
 			<a href="#" class="inline-block text-xl font-bold w-48 p-3">SPA</a>
 			<div class="flex-1 flex items-center pr-3">
 				<button type="button" class="p-3 text-xl"><i class="las la-bars"></i></button>
-				<div class="flex">
-					<input type="search" class="hidden">
-					<button type="button" class="p-3 text-xl"><i class="las la-search"></i></button>
-				</div>
 				<div class="relative">
 					<button type="button" class="p-3 text-xl"><i class="lar la-bell"></i></button>
 				</div>

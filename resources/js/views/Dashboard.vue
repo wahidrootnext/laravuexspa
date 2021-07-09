@@ -1,5 +1,5 @@
 <template>
-    I am dashboard
+    Welcome Mohammad Wahid
 </template>
 
 <script>

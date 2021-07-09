@@ -5,7 +5,7 @@
             <div class="w-48 bg-gray-700 min-h-screen text-white text-sm py-1">
                 <sidebar/>
             </div>
-            <div class="flex-1 p-3">
+            <div class="flex-1 p-5">
                 <router-view></router-view>
             </div>
         </div>
@@ -22,3 +22,9 @@
         }
     }
 </script>
+
+<style>
+    th, td {
+		padding: 8px;
+	}
+</style>
