@@ -19246,6 +19246,7 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.withCredentials = true;
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -19397,10 +19398,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
-  state: {},
-  getters: {},
-  mutations: {},
-  actions: {}
+  state: {
+    user: null,
+    errors: null
+  },
+  getters: {
+    getUser: function getUser(state) {
+      return state.user;
+    },
+    getErrors: function getErrors(state) {
+      return state.errors;
+    }
+  },
+  mutations: {
+    setUser: function setUser(state, user) {
+      state.user = user;
+    },
+    setErrrors: function setErrrors(state, errors) {
+      state.errors = errors;
+    }
+  },
+  actions: {
+    login: function login(_ref, data) {
+      var commit = _ref.commit;
+      axios.get('/sanctum/csrf-cookie').then(function (response) {});
+    }
+  }
 });
 
 /***/ }),
