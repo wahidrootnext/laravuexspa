@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12 px-4 py-8 md:px-8 self-center">
-            <form class="grid grid-cols-1 gap-3" @submit.prevent="login" novalidate>
+            <form class="grid grid-cols-1 gap-3" @submit.prevent="handleLogin" novalidate>
                 <div class="block text-2xl font-bold text-indigo-700 pb-2">Log in your account</div>
                 <label class="block">
                     <span class="text-gray-700 font-medium inline-block mb-1">Email address</span>
@@ -73,12 +73,17 @@
             }
         },
         methods: {
-            login(event) {
+            handleLogin(event) {
                 let form = event.target;
                 form.classList.add('was-validated');
                 if (form.checkValidity()) {
                     this.loading = true;
-                    console.log(this.form);
+                    this.$store.dispatch("auth/login", this.form).then(() => {
+                        this.loading = false;
+                        this.$router.push({ name: 'dashboard' });
+                    }).catch(() => {
+                        this.loading = false;
+                    });
                 }
             }
         }

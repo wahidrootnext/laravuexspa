@@ -6,11 +6,11 @@
             </div>
         </div>
         <div class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12 px-4 py-8 md:px-8 self-center">
-            <form class="grid grid-cols-1 gap-3" @submit.prevent="registration" novalidate>
+            <form class="grid grid-cols-1 gap-3" @submit.prevent="handleRegistration" novalidate>
                 <div class="block text-2xl font-bold text-indigo-700 pb-2">Create an account</div>
                 <label class="block">
                     <span class="text-gray-700 font-medium inline-block mb-1">Name</span>
-                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z]+" required v-model="form.name">
+                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z\s]+" required v-model="form.name">
                     <span class="text-red-500 text-sm hidden">Please provide a valid name</span>
                 </label>
                 <label class="block">
@@ -54,12 +54,15 @@
             }
         },
         methods: {
-            registration(event) {
+            handleRegistration(event) {
                 let form = event.target;
                 form.classList.add('was-validated');
                 if (form.checkValidity()) {
                     this.loading = true;
-                    console.log(this.form);
+                    this.$store.dispatch("auth/registration", this.form).then(() => {
+                        this.loading = false;
+                        this.$router.push({ name: 'login' });
+                    });
                 }
             }
         }

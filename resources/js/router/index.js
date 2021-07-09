@@ -21,12 +21,12 @@ const router = createRouter({
             component: Admin,
             meta: { auth: true },
             children: [
-                { path: '', name: 'dashboard', component: Dashboard },
-                { path: '/products', name: 'products', component: Products },
-                { path: '/orders', name: 'orders', component: Orders },
+                { path: '', name: 'dashboard', component: Dashboard, meta: { auth: true } },
+                { path: '/products', name: 'products', component: Products, meta: { auth: true } },
+                { path: '/orders', name: 'orders', component: Orders, meta: { auth: true } },
             ]
         },
-        { path: '/:pathMatch(.*)*', name: '404', component: NotFound, meta: { auth: undefined } },
+        { path: '/:catchAll(.*)', name: '404', component: NotFound, meta: { auth: undefined } },
     ]
 });
 
