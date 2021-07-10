@@ -1,30 +1,26 @@
 <template>
-    <div class="min-h-screen bg-indigo-50">
-        <navbar/>
-        <div class="flex">
-            <div class="w-48 bg-gray-700 min-h-screen text-white text-sm py-1">
-                <sidebar/>
-            </div>
-            <div class="flex-1 p-5">
-                <router-view></router-view>
-            </div>
-        </div>
-    </div>
+    <div class="flex w-screen h-screen text-gray-700">
+		<sidebar/>
+		<div class="flex flex-col flex-grow">
+			<navbar/>
+			<div class="flex-grow p-6 overflow-auto bg-indigo-50">
+				<div class="grid grid-cols-3 gap-6">
+					<div class="col-span-3 p-4 bg-white shadow relative">
+						<router-view/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-    import Navbar from '../components/Navbar.vue';
-    import Sidebar from '../components/Sidebar.vue';
+	import Navbar from '../components/Navbar.vue';
+	import Sidebar from '../components/Sidebar.vue';
     export default {
         components: {
-            Navbar,
-            Sidebar
-        }
+			Navbar,
+			Sidebar
+		}
     }
 </script>
-
-<style>
-    th, td {
-		padding: 8px;
-	}
-</style>

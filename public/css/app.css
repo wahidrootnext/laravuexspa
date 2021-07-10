@@ -719,22 +719,6 @@ select {
   outline: 1px auto -webkit-focus-ring-color;
 }
 
-.field.is-invalid, .was-validated .field:invalid {
-  --tw-border-opacity: 1;
-  border-color: rgba(252, 165, 165, var(--tw-border-opacity));
-}
-
-.field.is-invalid:focus, .was-validated .field:invalid:focus {
-  --tw-border-opacity: 1;
-  border-color: rgba(252, 165, 165, var(--tw-border-opacity));
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgba(254, 202, 202, var(--tw-ring-opacity));
-}
-
-.field.is-invalid ~ .hidden, .was-validated .field:invalid ~ .hidden {
-  display: block;
-}
-
 .container {
   width: 100%;
 }
@@ -32037,6 +32021,33 @@ select {
 
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.field.is-invalid, .was-validated .field:invalid {
+  --tw-border-opacity: 1;
+  border-color: rgba(252, 165, 165, var(--tw-border-opacity));
+}
+
+.field.is-invalid:focus, .was-validated .field:invalid:focus {
+  --tw-border-opacity: 1;
+  border-color: rgba(252, 165, 165, var(--tw-border-opacity));
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgba(254, 202, 202, var(--tw-ring-opacity));
+}
+
+.field.is-invalid ~ .hidden, .was-validated .field:invalid ~ .hidden {
+  display: block;
+}
+
+.group:focus .group-focus\:flex {
+  display: flex;
+}
+
+.sidebar > .router-link-exact-active {
+  --tw-bg-opacity: 1;
+  background-color: rgba(55, 65, 81, var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgba(229, 231, 235, var(--tw-text-opacity));
 }
 
 @media (min-width: 640px) {

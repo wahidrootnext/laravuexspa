@@ -1,33 +1,37 @@
 <template>
-	<nav class="bg-white shadow-sm">
-		<div class="container-fluid flex items-center">
-			<a href="#" class="inline-block text-xl font-bold w-48 p-3">SPA</a>
-			<div class="flex-1 flex items-center pr-3">
-				<button type="button" class="p-3 text-xl"><i class="las la-bars"></i></button>
-				<div class="relative">
-					<button type="button" class="p-3 text-xl"><i class="lar la-bell"></i></button>
-				</div>
-				<div class="ml-auto relative">
-					<button type="button" class="p-3 flex items-center gap-3">
-						Hello! {{ user.name }} <img class="h-7 w-7 rounded-full" src="https://i.pravatar.cc/150?img=4" alt="">
-					</button>
-					<div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-						<a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-						<a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-						<a href="/logout" @click.prevent="handleLogout" class="block px-4 py-2 text-sm text-gray-700">Log out</a>
+	<div class="flex items-center flex-shrink-0 h-14 px-6 shadow">
+		<button type="button"><i class="las la-bars text-2xl"></i></button>
+		<div class="flex ml-auto items-center gap-3">
+			<button type="button"><i class="lar la-bell text-2xl"></i></button>
+			<div class="relative flex items-center text-left dropdown">
+				<button type="button">
+					<img src="http://placehold.it/30x30" alt="{{ user?.name }}" class="rounded-full">
+				</button>
+				<div class="opacity-0 invisible dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95">
+					<div class="absolute right-0 w-56 mt-7 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none">
+						<div class="px-4 py-3">         
+							<p class="text-sm leading-5">Logged in as</p>
+							<p class="text-sm font-medium leading-5 text-gray-900 truncate">{{ user?.email }}</p>
+						</div>
+						<div class="py-1">
+							<a href="#" class="text-gray-700 flex justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:bg-gray-100">Account settings</a>
+							<div class="py-1">
+								<a href="/logout" @click.prevent="handleLogout" class="text-gray-700 flex justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:bg-gray-100">Logout</a>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</nav>
+	</div>
 </template>
 
 <script>
-	import { mapGetters } from 'vuex';
+	import { mapGetters } from "vuex";
 	export default {
 		computed: {
 			...mapGetters("auth", {
-				user: 'getUser'
+				user: "getUser"
 			})
 		},
 		methods: {
