@@ -67,8 +67,8 @@
             return {
                 loading: false,
                 form: {
-                    email: null,
-                    password: null
+                    email: "wahid@gmail.com",
+                    password: "123456"
                 }
             }
         },
@@ -81,8 +81,18 @@
                     this.$store.dispatch("auth/login", this.form).then(() => {
                         this.loading = false;
                         this.$router.push({ name: 'dashboard' });
-                    }).catch(() => {
+                        this.$notify({
+                            title: "Welcome",
+                            text: "Everything is ready to use.",
+                            type: "success"
+                        });
+                    }).catch(error => {
                         this.loading = false;
+                        this.$notify({
+                            title: "Failed to login",
+                            text: error.response.data.errors.email,
+                            type: "error"
+                        });
                     });
                 }
             }

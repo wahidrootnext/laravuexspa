@@ -10,23 +10,23 @@
                 <div class="block text-2xl font-bold text-indigo-700 pb-2">Create an account</div>
                 <label class="block">
                     <span class="text-gray-700 font-medium inline-block mb-1">Name</span>
-                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z\s]+" required v-model="form.name">
-                    <span class="text-red-500 text-sm hidden">Please provide a valid name</span>
+                    <input type="text" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[A-Za-z\s]+" required v-model="form.name" :class="[errors?.name ? 'is-invalid' : '']">
+                    <span class="text-red-500 text-sm" :class="[errors?.name ?? 'hidden']">{{ errors?.name?.join() ?? "Please provide a valid name." }}</span>
                 </label>
                 <label class="block">
                     <span class="text-gray-700 font-medium inline-block mb-1">Email address</span>
-                    <input type="email" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required v-model="form.email">
-                    <span class="text-red-500 text-sm hidden">Please provide a valid email address</span>
+                    <input type="email" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required v-model="form.email" :class="[errors?.email ? 'is-invalid' : '']">
+                    <span class="text-red-500 text-sm" :class="[errors?.email ?? 'hidden']">{{ errors?.email?.join() ?? "Please provide a valid email." }}</span>
                 </label>
                 <label class="block">
                     <span class="text-gray-700 font-medium inline-block mb-1">Password</span>
-                    <input type="password" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" minlength="6" required v-model="form.password">
-                    <span class="text-red-500 text-sm hidden">Please provide a valid password</span>
+                    <input type="password" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" minlength="6" required v-model="form.password" :class="[errors?.password ? 'is-invalid' : '']">
+                    <span class="text-red-500 text-sm" :class="[errors?.password ?? 'hidden']">{{ errors?.password?.join() ?? "Please provide a valid password." }}</span>
                 </label>
                 <label class="block">
                     <span class="text-gray-700 font-medium inline-block mb-1">Confirm Password</span>
-                    <input type="password" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" minlength="6" required v-model="form.password_confirmation">
-                    <span class="text-red-500 text-sm hidden">Passwords must be matched</span>
+                    <input type="password" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field" minlength="6" required v-model="form.password_confirmation" :class="[errors?.password_confirmation ? 'is-invalid' : '']">
+                    <span class="text-red-500 text-sm" :class="[errors?.password_confirmation ?? 'hidden']">{{ errors?.password_confirmation?.join() ?? "Please confirm the password." }}</span>
                 </label>
                 <div class="block pt-2">
                     <button v-if="loading" type="button" class="bg-indigo-400 px-6 py-3 w-full rounded cursor-default"><svg class="animate-spin h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></button>
@@ -45,6 +45,7 @@
         data() {
             return {
                 loading: false,
+                errors: {},
                 form: {
                     name: null,
                     email: null,
@@ -62,7 +63,37 @@
                     this.$store.dispatch("auth/registration", this.form).then(() => {
                         this.loading = false;
                         this.$router.push({ name: 'login' });
+                        this.$notify({
+                            title: "Registration Success",
+                            text: "Feel free to login.",
+                            type: "success"
+                        });
+                    }).catch(error => {
+                        this.loading = false;
+                        this.errors = error.response.data.errors;
                     });
+                }
+            },
+        },
+        watch: {
+            'form.name': function(val) {
+                if(val) {
+                    delete this.errors?.name;
+                }
+            },
+            'form.email': function(val) {
+                if(val) {
+                    delete this.errors?.email;
+                }
+            },
+            'form.password': function(val) {
+                if(val) {
+                    delete this.errors?.password;
+                }
+            },
+            'form.password_confirmation': function(val) {
+                if(val) {
+                    delete this.errors?.password_confirmation;
                 }
             }
         }

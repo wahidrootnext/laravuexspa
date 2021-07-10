@@ -9,7 +9,7 @@
 				</div>
 				<div class="ml-auto relative">
 					<button type="button" class="p-3 flex items-center gap-3">
-						Hello! Wahid <img class="h-7 w-7 rounded-full" src="https://i.pravatar.cc/150?img=4" alt="">
+						Hello! {{ user.name }} <img class="h-7 w-7 rounded-full" src="https://i.pravatar.cc/150?img=4" alt="">
 					</button>
 					<div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
 						<a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
@@ -23,12 +23,23 @@
 </template>
 
 <script>
+	import { mapGetters } from 'vuex';
 	export default {
+		computed: {
+			...mapGetters("auth", {
+				user: 'getUser'
+			})
+		},
 		methods: {
 			handleLogout() {
 				this.$store.dispatch("auth/logout").then(response => {
 					if(response.data === 1) {
 						this.$router.push({ name: 'login' });
+						this.$notify({
+							title: "Thank you",
+                            text: "You have been logged out successfully.",
+                            type: "success"
+                        });
 					}
 				});
 			}

@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import router from './router';
 import store from './store';
 import App from './App.vue';
+import notification from '@kyvg/vue3-notification';
 
 const token = store.getters["auth/getAuthToken"];
 if (token) {
@@ -10,11 +11,11 @@ if (token) {
 }
 
 router.beforeEach((to, from) => {
-    if (to.meta.auth === true && !store.getters["auth/isLoggedIn"]) {
+    if (to.meta.auth === true && store.getters["auth/getUser"] === null) {
         return {
             name: 'login',
         }
-    } else if (to.meta.auth === false && store.getters["auth/isLoggedIn"]) {
+    } else if (to.meta.auth === false && store.getters["auth/getUser"] !== null) {
         return {
             name: 'dashboard',
         }
@@ -26,4 +27,5 @@ router.beforeEach((to, from) => {
 createApp(App)
     .use(router)
     .use(store)
+    .use(notification)
     .mount("#app");

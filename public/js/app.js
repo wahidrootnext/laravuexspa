@@ -1,6 +1,597 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./node_modules/@kyvg/vue3-notification/dist/index.esm.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/@kyvg/vue3-notification/dist/index.esm.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "notify": () => (/* binding */ notify)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+function mitt(n){return {all:n=n||new Map,on:function(t,e){var i=n.get(t);i&&i.push(e)||n.set(t,[e]);},off:function(t,e){var i=n.get(t);i&&i.splice(i.indexOf(e)>>>0,1);},emit:function(t,e){(n.get(t)||[]).slice().map(function(n){n(e);}),(n.get("*")||[]).slice().map(function(n){n(t,e);});}}}
+
+const events = mitt();
+
+const params = new Map();
+
+const directions = {
+    x: ['left', 'center', 'right'],
+    y: ['top', 'bottom'],
+};
+/**
+  * Sequential ID generator
+  */
+const Id = (i => () => i++)(0);
+/**
+  * Splits space/tab separated string into array and cleans empty string items.
+  */
+const split = (value) => {
+    if (typeof value !== 'string') {
+        return [];
+    }
+    return value.split(/\s+/gi).filter(v => v);
+};
+/**
+  * Cleanes and transforms string of format "x y" into object {x, y}.
+  * Possible combinations:
+  *   x - left, center, right
+  *   y - top, bottom
+  */
+const listToDirection = (value) => {
+    if (typeof value === 'string') {
+        value = split(value);
+    }
+    let x = null;
+    let y = null;
+    value.forEach(v => {
+        if (directions.y.indexOf(v) !== -1) {
+            y = v;
+        }
+        if (directions.x.indexOf(v) !== -1) {
+            x = v;
+        }
+    });
+    return { x, y };
+};
+class Timer {
+    constructor(callback, delay, notifItem) {
+        this.remaining = delay;
+        this.callback = callback;
+        this.notifyItem = notifItem;
+        this.resume();
+    }
+    pause() {
+        clearTimeout(this.notifyItem.timer);
+        this.remaining -= Date.now() - this.start;
+    }
+    resume() {
+        this.start = Date.now();
+        clearTimeout(this.notifyItem.timer);
+        // @ts-ignore FIXME Node.js timer type
+        this.notifyItem.timer = setTimeout(this.callback, this.remaining);
+    }
+}
+
+var defaults = {
+    position: ['top', 'right'],
+    cssAnimation: 'vn-fade',
+    velocityAnimation: {
+        enter: (el) => {
+            const height = el.clientHeight;
+            return {
+                height: [height, 0],
+                opacity: [1, 0],
+            };
+        },
+        leave: {
+            height: 0,
+            opacity: [0, 1],
+        },
+    },
+};
+
+var script$2 = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: 'velocity-group',
+    emits: ['after-leave', 'leave', 'enter'],
+    methods: {
+        enter(el, complete) {
+            this.$emit('enter', { el, complete });
+        },
+        leave(el, complete) {
+            this.$emit('leave', { el, complete });
+        },
+        afterLeave() {
+            this.$emit('after-leave');
+        },
+    },
+});
+
+function render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.TransitionGroup, {
+    tag: "span",
+    css: false,
+    onEnter: _ctx.enter,
+    onLeave: _ctx.leave,
+    onAfterLeave: _ctx.afterLeave
+  }, {
+    default: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(() => [
+      (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default")
+    ]),
+    _: 3 /* FORWARDED */
+  }, 8 /* PROPS */, ["onEnter", "onLeave", "onAfterLeave"]))
+}
+
+script$2.render = render$2;
+script$2.__file = "src/VelocityGroup.vue";
+
+var script$1 = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: 'css-group',
+    inheritAttrs: false,
+    props: {
+        name: { type: String, required: true },
+    },
+});
+
+function render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.TransitionGroup, {
+    tag: "span",
+    name: _ctx.name
+  }, {
+    default: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(() => [
+      (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default")
+    ]),
+    _: 3 /* FORWARDED */
+  }, 8 /* PROPS */, ["name"]))
+}
+
+script$1.render = render$1;
+script$1.__file = "src/CssGroup.vue";
+
+const floatRegexp = '[-+]?[0-9]*.?[0-9]+';
+const types = [
+    {
+        name: 'px',
+        regexp: new RegExp(`^${floatRegexp}px$`),
+    },
+    {
+        name: '%',
+        regexp: new RegExp(`^${floatRegexp}%$`),
+    },
+    /**
+     * Fallback option
+     * If no suffix specified, assigning "px"
+     */
+    {
+        name: 'px',
+        regexp: new RegExp(`^${floatRegexp}$`),
+    },
+];
+const getType = (value) => {
+    if (value === 'auto') {
+        return {
+            type: value,
+            value: 0,
+        };
+    }
+    for (let i = 0; i < types.length; i++) {
+        const type = types[i];
+        if (type.regexp.test(value)) {
+            return {
+                type: type.name,
+                value: parseFloat(value),
+            };
+        }
+    }
+    return {
+        type: '',
+        value,
+    };
+};
+const parse = (value) => {
+    switch (typeof value) {
+        case 'number':
+            return { type: 'px', value };
+        case 'string':
+            return getType(value);
+        default:
+            return { type: '', value };
+    }
+};
+
+const STATE = {
+    IDLE: 0,
+    DESTROYED: 2,
+};
+var script = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: 'notifications',
+    components: {
+        VelocityGroup: script$2,
+        CssGroup: script$1,
+    },
+    props: {
+        group: {
+            type: String,
+            default: '',
+        },
+        width: {
+            type: [Number, String],
+            default: 300,
+        },
+        reverse: {
+            type: Boolean,
+            default: false,
+        },
+        position: {
+            type: [String, Array],
+            default: defaults.position,
+        },
+        classes: {
+            type: String,
+            default: 'vue-notification',
+        },
+        animationType: {
+            type: String,
+            default: 'css',
+        },
+        animation: {
+            type: Object,
+            default: defaults.velocityAnimation,
+        },
+        animationName: {
+            type: String,
+            default: defaults.cssAnimation,
+        },
+        speed: {
+            type: Number,
+            default: 300,
+        },
+        /* Todo */
+        cooldown: {
+            type: Number,
+            default: 0,
+        },
+        duration: {
+            type: Number,
+            default: 3000,
+        },
+        delay: {
+            type: Number,
+            default: 0,
+        },
+        max: {
+            type: Number,
+            default: Infinity,
+        },
+        ignoreDuplicates: {
+            type: Boolean,
+            default: false,
+        },
+        closeOnClick: {
+            type: Boolean,
+            default: true,
+        },
+        pauseOnHover: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    emits: ['click', 'destroy'],
+    data() {
+        return {
+            list: [],
+            velocity: params.get('velocity'),
+            timerControl: null,
+        };
+    },
+    computed: {
+        actualWidth() {
+            return parse(this.width);
+        },
+        isVA() {
+            return this.animationType === 'velocity';
+        },
+        componentName() {
+            return this.isVA ? 'velocity-group' : 'css-group';
+        },
+        styles() {
+            const { x, y } = listToDirection(this.position);
+            const width = this.actualWidth.value;
+            const suffix = this.actualWidth.type;
+            const styles = {
+                width: width + suffix,
+            };
+            if (y) {
+                styles[y] = '0px';
+            }
+            if (x) {
+                if (x === 'center') {
+                    styles['left'] = `calc(50% - ${+width / 2}${suffix})`;
+                }
+                else {
+                    styles[x] = '0px';
+                }
+            }
+            return styles;
+        },
+        active() {
+            return this.list.filter(v => v.state !== STATE.DESTROYED);
+        },
+        botToTop() {
+            // eslint-disable-next-line no-prototype-builtins
+            return this.styles.hasOwnProperty('bottom');
+        },
+    },
+    mounted() {
+        events.on('add', this.addItem);
+        events.on('close', this.closeItem);
+    },
+    methods: {
+        destroyIfNecessary(item) {
+            this.$emit('click', item);
+            if (this.closeOnClick) {
+                this.destroy(item);
+            }
+        },
+        pauseTimeout() {
+            var _a;
+            if (this.pauseOnHover) {
+                (_a = this.timerControl) === null || _a === void 0 ? void 0 : _a.pause();
+            }
+        },
+        resumeTimeout() {
+            var _a;
+            if (this.pauseOnHover) {
+                (_a = this.timerControl) === null || _a === void 0 ? void 0 : _a.resume();
+            }
+        },
+        addItem(event = {}) {
+            event.group || (event.group = '');
+            event.data || (event.data = {});
+            if (this.group !== event.group) {
+                return;
+            }
+            if (event.clean || event.clear) {
+                this.destroyAll();
+                return;
+            }
+            const duration = typeof event.duration === 'number'
+                ? event.duration
+                : this.duration;
+            const speed = typeof event.speed === 'number'
+                ? event.speed
+                : this.speed;
+            const ignoreDuplicates = typeof event.ignoreDuplicates === 'boolean'
+                ? event.ignoreDuplicates
+                : this.ignoreDuplicates;
+            const { title, text, type, data, id } = event;
+            const item = {
+                id: id || Id(),
+                title,
+                text,
+                type,
+                state: STATE.IDLE,
+                speed,
+                length: duration + 2 * speed,
+                data,
+            };
+            if (duration >= 0) {
+                this.timerControl = new Timer(() => this.destroy(item), item.length, item);
+            }
+            const direction = this.reverse
+                ? !this.botToTop
+                : this.botToTop;
+            let indexToDestroy = -1;
+            const isDuplicate = this.active.some(i => {
+                return i.title === event.title && i.text === event.text;
+            });
+            const canAdd = ignoreDuplicates ? !isDuplicate : true;
+            if (!canAdd) {
+                return;
+            }
+            if (direction) {
+                this.list.push(item);
+                if (this.active.length > this.max) {
+                    indexToDestroy = 0;
+                }
+            }
+            else {
+                this.list.unshift(item);
+                if (this.active.length > this.max) {
+                    indexToDestroy = this.active.length - 1;
+                }
+            }
+            if (indexToDestroy !== -1) {
+                this.destroy(this.active[indexToDestroy]);
+            }
+        },
+        closeItem(id) {
+            this.destroyById(id);
+        },
+        notifyClass(item) {
+            var _a;
+            return [
+                'vue-notification-template',
+                this.classes,
+                (_a = item.type) !== null && _a !== void 0 ? _a : '',
+            ];
+        },
+        notifyWrapperStyle(item) {
+            return this.isVA
+                ? undefined
+                : { transition: `all ${item.speed}ms` };
+        },
+        destroy(item) {
+            clearTimeout(item.timer);
+            item.state = STATE.DESTROYED;
+            if (!this.isVA) {
+                this.clean();
+            }
+            this.$emit('destroy', item);
+        },
+        destroyById(id) {
+            const item = this.list.find(v => v.id === id);
+            if (item) {
+                this.destroy(item);
+            }
+        },
+        destroyAll() {
+            this.active.forEach(this.destroy);
+        },
+        getAnimation(index, el) {
+            var _a;
+            const animation = (_a = this.animation) === null || _a === void 0 ? void 0 : _a[index];
+            return typeof animation === 'function'
+                ? animation.call(this, el)
+                : animation;
+        },
+        enter(el, complete) {
+            if (!this.isVA) {
+                return;
+            }
+            const animation = this.getAnimation('enter', el);
+            this.velocity(el, animation, {
+                duration: this.speed,
+                complete,
+            });
+        },
+        leave(el, complete) {
+            if (!this.isVA) {
+                return;
+            }
+            const animation = this.getAnimation('leave', el);
+            this.velocity(el, animation, {
+                duration: this.speed,
+                complete,
+            });
+        },
+        clean() {
+            this.list = this.list.filter(v => v.state !== STATE.DESTROYED);
+        },
+    },
+});
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
+    class: "vue-notification-group",
+    style: _ctx.styles
+  }, [
+    ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)((0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDynamicComponent)(_ctx.componentName), {
+      name: _ctx.animationName,
+      onEnter: _ctx.enter,
+      onLeave: _ctx.leave,
+      onAfterLeave: _ctx.clean
+    }, {
+      default: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(() => [
+        ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.active, (item) => {
+          return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
+            key: item.id,
+            class: "vue-notification-wrapper",
+            style: _ctx.notifyWrapperStyle(item),
+            "data-id": item.id,
+            onMouseenter: _cache[1] || (_cache[1] = (...args) => (_ctx.pauseTimeout && _ctx.pauseTimeout(...args))),
+            onMouseleave: _cache[2] || (_cache[2] = (...args) => (_ctx.resumeTimeout && _ctx.resumeTimeout(...args)))
+          }, [
+            (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "body", {
+              class: [_ctx.classes, item.type],
+              item: item,
+              close: () => _ctx.destroy(item)
+            }, () => [
+              (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Default slot template "),
+              (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+                class: _ctx.notifyClass(item),
+                onClick: $event => (_ctx.destroyIfNecessary(item))
+              }, [
+                (item.title)
+                  ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
+                      key: 0,
+                      class: "notification-title",
+                      innerHTML: item.title
+                    }, null, 8 /* PROPS */, ["innerHTML"]))
+                  : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true),
+                (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+                  class: "notification-content",
+                  innerHTML: item.text
+                }, null, 8 /* PROPS */, ["innerHTML"])
+              ], 10 /* CLASS, PROPS */, ["onClick"])
+            ])
+          ], 44 /* STYLE, PROPS, HYDRATE_EVENTS */, ["data-id"]))
+        }), 128 /* KEYED_FRAGMENT */))
+      ]),
+      _: 3 /* FORWARDED */
+    }, 8 /* PROPS */, ["name", "onEnter", "onLeave", "onAfterLeave"]))
+  ], 4 /* STYLE */))
+}
+
+function styleInject(css, ref) {
+  if ( ref === void 0 ) ref = {};
+  var insertAt = ref.insertAt;
+
+  if (!css || typeof document === 'undefined') { return; }
+
+  var head = document.head || document.getElementsByTagName('head')[0];
+  var style = document.createElement('style');
+  style.type = 'text/css';
+
+  if (insertAt === 'top') {
+    if (head.firstChild) {
+      head.insertBefore(style, head.firstChild);
+    } else {
+      head.appendChild(style);
+    }
+  } else {
+    head.appendChild(style);
+  }
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(document.createTextNode(css));
+  }
+}
+
+var css_248z = "\n.vue-notification-group {\n  display: block;\n  position: fixed;\n  z-index: 5000;\n}\n.vue-notification-wrapper {\n  display: block;\n  overflow: hidden;\n  width: 100%;\n  margin: 0;\n  padding: 0;\n}\n.notification-title {\n  font-weight: 600;\n}\n.vue-notification-template {\n  display: block;\n  box-sizing: border-box;\n  background: white;\n  text-align: left;\n}\n.vue-notification {\n  display: block;\n  box-sizing: border-box;\n  text-align: left;\n  font-size: 12px;\n  padding: 10px;\n  margin: 0 5px 5px;\n\n  color: white;\n  background: #44A4FC;\n  border-left: 5px solid #187FE7;\n}\n.vue-notification.warn {\n  background: #ffb648;\n  border-left-color: #f48a06;\n}\n.vue-notification.error {\n  background: #E54D42;\n  border-left-color: #B82E24;\n}\n.vue-notification.success {\n  background: #68CD86;\n  border-left-color: #42A85F;\n}\n.vn-fade-enter-active, .vn-fade-leave-active, .vn-fade-move  {\n  transition: all .5s;\n}\n.vn-fade-enter-from, .vn-fade-leave-to {\n  opacity: 0;\n}\n\n";
+styleInject(css_248z);
+
+script.render = render;
+script.__file = "src/Notifications.vue";
+
+const notify = (args) => {
+    if (typeof args === 'string') {
+        args = { title: '', text: args };
+    }
+    if (typeof args === 'object') {
+        events.emit('add', args);
+    }
+};
+notify.close = function (id) {
+    events.emit('close', id);
+};
+
+function install(app, args = {}) {
+    Object.entries(args).forEach((entry) => params.set(...entry));
+    const name = args.name || 'notify';
+    app.config.globalProperties['$' + name] = notify;
+    app.component(args.componentName || 'notifications', script);
+}
+
+var index = {
+    install,
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (index);
+
+
+
+/***/ }),
+
 /***/ "./node_modules/@vue/compiler-core/dist/compiler-core.esm-bundler.js":
 /*!***************************************************************************!*\
   !*** ./node_modules/@vue/compiler-core/dist/compiler-core.esm-bundler.js ***!
@@ -18125,7 +18716,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)("auth", {
+    user: 'getUser'
+  })),
   methods: {
     handleLogout: function handleLogout() {
       var _this = this;
@@ -18134,6 +18736,12 @@ __webpack_require__.r(__webpack_exports__);
         if (response.data === 1) {
           _this.$router.push({
             name: 'login'
+          });
+
+          _this.$notify({
+            title: "Thank you",
+            text: "You have been logged out successfully.",
+            type: "success"
           });
         }
       });
@@ -18270,8 +18878,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       loading: false,
       form: {
-        email: null,
-        password: null
+        email: "wahid@gmail.com",
+        password: "123456"
       }
     };
   },
@@ -18290,8 +18898,20 @@ __webpack_require__.r(__webpack_exports__);
           _this.$router.push({
             name: 'dashboard'
           });
-        })["catch"](function () {
+
+          _this.$notify({
+            title: "Welcome",
+            text: "Everything is ready to use.",
+            type: "success"
+          });
+        })["catch"](function (error) {
           _this.loading = false;
+
+          _this.$notify({
+            title: "Failed to login",
+            text: error.response.data.errors.email,
+            type: "error"
+          });
         });
       }
     }
@@ -18330,6 +18950,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       loading: false,
+      errors: {},
       form: {
         name: null,
         email: null,
@@ -18353,7 +18974,46 @@ __webpack_require__.r(__webpack_exports__);
           _this.$router.push({
             name: 'login'
           });
+
+          _this.$notify({
+            title: "Registration Success",
+            text: "Feel free to login.",
+            type: "success"
+          });
+        })["catch"](function (error) {
+          _this.loading = false;
+          _this.errors = error.response.data.errors;
         });
+      }
+    }
+  },
+  watch: {
+    'form.name': function formName(val) {
+      if (val) {
+        var _this$errors;
+
+        (_this$errors = this.errors) === null || _this$errors === void 0 ? true : delete _this$errors.name;
+      }
+    },
+    'form.email': function formEmail(val) {
+      if (val) {
+        var _this$errors2;
+
+        (_this$errors2 = this.errors) === null || _this$errors2 === void 0 ? true : delete _this$errors2.email;
+      }
+    },
+    'form.password': function formPassword(val) {
+      if (val) {
+        var _this$errors3;
+
+        (_this$errors3 = this.errors) === null || _this$errors3 === void 0 ? true : delete _this$errors3.password;
+      }
+    },
+    'form.password_confirmation': function formPassword_confirmation(val) {
+      if (val) {
+        var _this$errors4;
+
+        (_this$errors4 = this.errors) === null || _this$errors4 === void 0 ? true : delete _this$errors4.password_confirmation;
       }
     }
   }
@@ -18375,9 +19035,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_notifications = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("notifications");
+
   var _component_router_view = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-view");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_router_view);
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_notifications), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_view)], 64
+  /* STABLE_FRAGMENT */
+  );
 }
 
 /***/ }),
@@ -18418,23 +19082,24 @@ var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVN
 var _hoisted_7 = {
   "class": "ml-auto relative"
 };
-
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+var _hoisted_8 = {
   type: "button",
   "class": "p-3 flex items-center gap-3"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Hello! Wahid "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
+};
+
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
   "class": "h-7 w-7 rounded-full",
   src: "https://i.pravatar.cc/150?img=4",
   alt: ""
-})], -1
+}, null, -1
 /* HOISTED */
 );
 
-var _hoisted_9 = {
+var _hoisted_10 = {
   "class": "origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
 };
 
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
   href: "#",
   "class": "block px-4 py-2 text-sm text-gray-700",
   role: "menuitem",
@@ -18444,7 +19109,7 @@ var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 /* HOISTED */
 );
 
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
   href: "#",
   "class": "block px-4 py-2 text-sm text-gray-700",
   role: "menuitem",
@@ -18455,7 +19120,9 @@ var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 );
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("nav", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_9, [_hoisted_10, _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("nav", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Hello! " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.user.name) + " ", 1
+  /* TEXT */
+  ), _hoisted_9]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_10, [_hoisted_11, _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
     href: "/logout",
     onClick: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $options.handleLogout && $options.handleLogout.apply($options, arguments);
@@ -19091,25 +19758,23 @@ var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("
 /* HOISTED */
 );
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
-  "class": "text-red-500 text-sm hidden"
-}, "Please provide a valid name", -1
-/* HOISTED */
-);
-
-var _hoisted_10 = {
+var _hoisted_9 = {
   "class": "block"
 };
 
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
   "class": "text-gray-700 font-medium inline-block mb-1"
 }, "Email address", -1
 /* HOISTED */
 );
 
+var _hoisted_11 = {
+  "class": "block"
+};
+
 var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
-  "class": "text-red-500 text-sm hidden"
-}, "Please provide a valid email address", -1
+  "class": "text-gray-700 font-medium inline-block mb-1"
+}, "Password", -1
 /* HOISTED */
 );
 
@@ -19119,42 +19784,20 @@ var _hoisted_13 = {
 
 var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
   "class": "text-gray-700 font-medium inline-block mb-1"
-}, "Password", -1
-/* HOISTED */
-);
-
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
-  "class": "text-red-500 text-sm hidden"
-}, "Please provide a valid password", -1
-/* HOISTED */
-);
-
-var _hoisted_16 = {
-  "class": "block"
-};
-
-var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
-  "class": "text-gray-700 font-medium inline-block mb-1"
 }, "Confirm Password", -1
 /* HOISTED */
 );
 
-var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
-  "class": "text-red-500 text-sm hidden"
-}, "Passwords must be matched", -1
-/* HOISTED */
-);
-
-var _hoisted_19 = {
+var _hoisted_15 = {
   "class": "block pt-2"
 };
-var _hoisted_20 = {
+var _hoisted_16 = {
   key: 0,
   type: "button",
   "class": "bg-indigo-400 px-6 py-3 w-full rounded cursor-default"
 };
 
-var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("svg", {
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("svg", {
   "class": "animate-spin h-5 w-5 text-white inline-block",
   xmlns: "http://www.w3.org/2000/svg",
   fill: "none",
@@ -19174,20 +19817,22 @@ var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 /* HOISTED */
 );
 
-var _hoisted_22 = {
+var _hoisted_18 = {
   key: 1,
   type: "submit",
   "class": "bg-indigo-500 text-white px-6 py-3 w-full rounded font-bold hover:bg-indigo-600 transition duration-200 each-in-out"
 };
-var _hoisted_23 = {
+var _hoisted_19 = {
   "class": "block text-center"
 };
 
-var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Already have an account? ");
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Already have an account? ");
 
-var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Login");
+var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Login");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _$data$errors, _$data$errors$name, _$data$errors2, _$data$errors$name$jo, _$data$errors3, _$data$errors3$name, _$data$errors4, _$data$errors$email, _$data$errors5, _$data$errors$email$j, _$data$errors6, _$data$errors6$email, _$data$errors7, _$data$errors$passwor, _$data$errors8, _$data$errors$passwor2, _$data$errors9, _$data$errors9$passwo, _$data$errors10, _$data$errors$passwor3, _$data$errors11, _$data$errors$passwor4, _$data$errors12, _$data$errors12$passw;
+
   var _component_router_link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-link");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
@@ -19209,52 +19854,68 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     novalidate: ""
   }, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
     type: "text",
-    "class": "block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field",
+    "class": ["block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field", [(_$data$errors = $data.errors) !== null && _$data$errors !== void 0 && _$data$errors.name ? 'is-invalid' : '']],
     pattern: "[A-Za-z\\s]+",
     required: "",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $data.form.name = $event;
     })
-  }, null, 512
-  /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.name]]), _hoisted_9]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+  }, null, 2
+  /* CLASS */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.name]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+    "class": ["text-red-500 text-sm", [(_$data$errors$name = (_$data$errors2 = $data.errors) === null || _$data$errors2 === void 0 ? void 0 : _$data$errors2.name) !== null && _$data$errors$name !== void 0 ? _$data$errors$name : 'hidden']]
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$errors$name$jo = (_$data$errors3 = $data.errors) === null || _$data$errors3 === void 0 ? void 0 : (_$data$errors3$name = _$data$errors3.name) === null || _$data$errors3$name === void 0 ? void 0 : _$data$errors3$name.join()) !== null && _$data$errors$name$jo !== void 0 ? _$data$errors$name$jo : "Please provide a valid name."), 3
+  /* TEXT, CLASS */
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
     type: "email",
-    "class": "block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field",
+    "class": ["block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field", [(_$data$errors4 = $data.errors) !== null && _$data$errors4 !== void 0 && _$data$errors4.email ? 'is-invalid' : '']],
     pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$",
     required: "",
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $data.form.email = $event;
     })
-  }, null, 512
-  /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.email]]), _hoisted_12]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+  }, null, 2
+  /* CLASS */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.email]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+    "class": ["text-red-500 text-sm", [(_$data$errors$email = (_$data$errors5 = $data.errors) === null || _$data$errors5 === void 0 ? void 0 : _$data$errors5.email) !== null && _$data$errors$email !== void 0 ? _$data$errors$email : 'hidden']]
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$errors$email$j = (_$data$errors6 = $data.errors) === null || _$data$errors6 === void 0 ? void 0 : (_$data$errors6$email = _$data$errors6.email) === null || _$data$errors6$email === void 0 ? void 0 : _$data$errors6$email.join()) !== null && _$data$errors$email$j !== void 0 ? _$data$errors$email$j : "Please provide a valid email."), 3
+  /* TEXT, CLASS */
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
     type: "password",
-    "class": "block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field",
+    "class": ["block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field", [(_$data$errors7 = $data.errors) !== null && _$data$errors7 !== void 0 && _$data$errors7.password ? 'is-invalid' : '']],
     minlength: "6",
     required: "",
     "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $data.form.password = $event;
     })
-  }, null, 512
-  /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.password]]), _hoisted_15]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_16, [_hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+  }, null, 2
+  /* CLASS */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.password]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+    "class": ["text-red-500 text-sm", [(_$data$errors$passwor = (_$data$errors8 = $data.errors) === null || _$data$errors8 === void 0 ? void 0 : _$data$errors8.password) !== null && _$data$errors$passwor !== void 0 ? _$data$errors$passwor : 'hidden']]
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$errors$passwor2 = (_$data$errors9 = $data.errors) === null || _$data$errors9 === void 0 ? void 0 : (_$data$errors9$passwo = _$data$errors9.password) === null || _$data$errors9$passwo === void 0 ? void 0 : _$data$errors9$passwo.join()) !== null && _$data$errors$passwor2 !== void 0 ? _$data$errors$passwor2 : "Please provide a valid password."), 3
+  /* TEXT, CLASS */
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
     type: "password",
-    "class": "block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field",
+    "class": ["block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 field", [(_$data$errors10 = $data.errors) !== null && _$data$errors10 !== void 0 && _$data$errors10.password_confirmation ? 'is-invalid' : '']],
     minlength: "6",
     required: "",
     "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
       return $data.form.password_confirmation = $event;
     })
-  }, null, 512
-  /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.password_confirmation]]), _hoisted_18]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_19, [$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("button", _hoisted_20, [_hoisted_21])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("button", _hoisted_22, "Submit"))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_23, [_hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+  }, null, 2
+  /* CLASS */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.password_confirmation]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+    "class": ["text-red-500 text-sm", [(_$data$errors$passwor3 = (_$data$errors11 = $data.errors) === null || _$data$errors11 === void 0 ? void 0 : _$data$errors11.password_confirmation) !== null && _$data$errors$passwor3 !== void 0 ? _$data$errors$passwor3 : 'hidden']]
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$errors$passwor4 = (_$data$errors12 = $data.errors) === null || _$data$errors12 === void 0 ? void 0 : (_$data$errors12$passw = _$data$errors12.password_confirmation) === null || _$data$errors12$passw === void 0 ? void 0 : _$data$errors12$passw.join()) !== null && _$data$errors$passwor4 !== void 0 ? _$data$errors$passwor4 : "Please confirm the password."), 3
+  /* TEXT, CLASS */
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_15, [$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("button", _hoisted_16, [_hoisted_17])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("button", _hoisted_18, "Submit"))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     to: {
       name: 'login'
     },
     "class": "text-indigo-500"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_25];
+      return [_hoisted_21];
     }),
     _: 1
     /* STABLE */
@@ -19278,7 +19939,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./resources/js/store/index.js");
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
+/* harmony import */ var _kyvg_vue3_notification__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @kyvg/vue3-notification */ "./node_modules/@kyvg/vue3-notification/dist/index.esm.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
 
 
 
@@ -19291,17 +19954,17 @@ if (token) {
 }
 
 _router__WEBPACK_IMPORTED_MODULE_1__.default.beforeEach(function (to, from) {
-  if (to.meta.auth === true && !_store__WEBPACK_IMPORTED_MODULE_2__.default.getters["auth/isLoggedIn"]) {
+  if (to.meta.auth === true && _store__WEBPACK_IMPORTED_MODULE_2__.default.getters["auth/getUser"] === null) {
     return {
       name: 'login'
     };
-  } else if (to.meta.auth === false && _store__WEBPACK_IMPORTED_MODULE_2__.default.getters["auth/isLoggedIn"]) {
+  } else if (to.meta.auth === false && _store__WEBPACK_IMPORTED_MODULE_2__.default.getters["auth/getUser"] !== null) {
     return {
       name: 'dashboard'
     };
   }
 });
-(0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)(_App_vue__WEBPACK_IMPORTED_MODULE_3__.default).use(_router__WEBPACK_IMPORTED_MODULE_1__.default).use(_store__WEBPACK_IMPORTED_MODULE_2__.default).mount("#app");
+(0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)(_App_vue__WEBPACK_IMPORTED_MODULE_3__.default).use(_router__WEBPACK_IMPORTED_MODULE_1__.default).use(_store__WEBPACK_IMPORTED_MODULE_2__.default).use(_kyvg_vue3_notification__WEBPACK_IMPORTED_MODULE_4__.default).mount("#app");
 
 /***/ }),
 
@@ -19483,19 +20146,11 @@ __webpack_require__.r(__webpack_exports__);
   namespaced: true,
   state: {
     user: null,
-    errors: null,
-    loggedIn: false,
     authToken: null
   },
   getters: {
     getUser: function getUser(state) {
       return state.user;
-    },
-    getErrors: function getErrors(state) {
-      return state.errors;
-    },
-    isLoggedIn: function isLoggedIn(state) {
-      return state.loggedIn;
     },
     getAuthToken: function getAuthToken(state) {
       return state.authToken;
@@ -19504,12 +20159,6 @@ __webpack_require__.r(__webpack_exports__);
   mutations: {
     setUser: function setUser(state, user) {
       state.user = user;
-    },
-    setErrrors: function setErrrors(state, errors) {
-      state.errors = errors;
-    },
-    setLoggedIn: function setLoggedIn(state, loggedIn) {
-      state.loggedIn = loggedIn;
     },
     setAuthToken: function setAuthToken(state, token) {
       state.authToken = token;
@@ -19521,10 +20170,8 @@ __webpack_require__.r(__webpack_exports__);
       return new Promise(function (resolve, reject) {
         axios.get('/sanctum/csrf-cookie').then(function () {
           axios.post("/api/registration", user).then(function (response) {
-            commit("setErrrors", null);
             resolve(response);
           })["catch"](function (error) {
-            commit("setErrrors", error.response.data.errors);
             reject(error);
           });
         });
@@ -19535,16 +20182,12 @@ __webpack_require__.r(__webpack_exports__);
       return new Promise(function (resolve, reject) {
         axios.get('/sanctum/csrf-cookie').then(function () {
           axios.post("/api/login", user).then(function (response) {
-            commit("setErrrors", null);
             commit("setUser", response.data.user);
-            commit("setLoggedIn", true);
             commit("setAuthToken", response.data.access_token);
             axios.defaults.headers.common['Authorization'] = "Bearer " + response.data.access_token;
             resolve(response);
           })["catch"](function (error) {
-            commit("setErrrors", error.response.data.errors);
             commit("setUser", null);
-            commit("setLoggedIn", false);
             commit("setAuthToken", null);
             delete axios.defaults.headers.common['Authorization'];
             reject(error);
@@ -19557,9 +20200,7 @@ __webpack_require__.r(__webpack_exports__);
       return new Promise(function (resolve, reject) {
         axios.get('/sanctum/csrf-cookie').then(function () {
           axios.post("/api/logout").then(function (response) {
-            commit("setErrrors", null);
             commit("setUser", null);
-            commit("setLoggedIn", false);
             commit("setAuthToken", null);
             delete axios.defaults.headers.common['Authorization'];
             resolve(response);
